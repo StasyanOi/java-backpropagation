@@ -74,7 +74,7 @@ public class Main {
         double[] input = {-3, -2, -1, 0, 1, 2, 3};
         double[] expected_output = {-7, -5, -3, -1, 1, 3, 5};
         double learning_rate = 0.01;
-        int epochs = 2000;
+        int epochs = 20;
         train_linear_model(input, expected_output, epochs, learning_rate);
     }
 }
