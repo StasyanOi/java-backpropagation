@@ -1,4 +1,4 @@
-public class Main {
+public class SingleNeuronBackpropagation {
 
     private static double[] line(double w, double[] x, double b) {
         double[] y = new double[x.length];
