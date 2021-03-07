@@ -137,14 +137,14 @@ public class DoubleNeuronBackpropagation {
 
             System.out.println("mse: " + mse);
 
-            double[] delta_w2 = delta_initial(expected_output, calculated_output);
-            double[] delta_b2 = delta_initial(expected_output, calculated_output);
 
             //update w2
+            double[] delta_w2 = delta_initial(expected_output, calculated_output);
             double[] partial_derivative_w2 = multiply(delta_w2, a[1]);
             parameters[1][0] = update_weight(parameters[1][0], average(partial_derivative_w2), learning_rate);
 
             //update b2
+            double[] delta_b2 = delta_initial(expected_output, calculated_output);
             double[] partial_derivative_b2 = multiply(delta_b2, 1);
             parameters[1][1] = update_weight(parameters[1][1], average(partial_derivative_b2), learning_rate);
 
