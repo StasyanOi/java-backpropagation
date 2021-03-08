@@ -66,11 +66,7 @@ public class Microframework {
 
             RealMatrix[] grads_b = new RealMatrix[architecture.length];
             for (int i = 0; i < deltas.length; i++) {
-                if (i == 0) {
-                    grads_b[i] = deltas[i];
-                } else {
-                    grads_b[i] = deltas[i];
-                }
+                grads_b[i] = deltas[i];
             }
 
             for (int i = 0; i < grads_b.length; i++) {
