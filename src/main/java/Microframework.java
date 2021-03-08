@@ -19,44 +19,44 @@ public class Microframework {
 
             int layer_input = input_size;
             for (int i = 0; i < weights.length; i++) {
-                weights[i] = random(layer_input, layers[i]);
+                weights[i] = random(layers[i], layer_input);
                 layer_input = layers[i];
             }
 
             biases = new RealMatrix[layers.length];
 
             for (int i = 0; i < biases.length; i++) {
-                biases[i] = random(1, layers[i]);
+                biases[i] = random(layers[i], 1);
             }
 
             architecture = layers;
         }
 
-        public void train_on_batch(RealMatrix train_inputs, RealMatrix train_outputs) {
-            for (int i = 0; i < train_inputs.getRowDimension(); i++) {
-                train(train_inputs.getRowMatrix(i), train_outputs.getRowMatrix(i));
+        public void train_on_batch_new(RealMatrix train_inputs, RealMatrix train_outputs) {
+            for (int i = 0; i < train_inputs.getColumnDimension(); i++) {
+                train_new(train_inputs.getColumnMatrix(i), train_outputs.getColumnMatrix(i));
             }
         }
 
-        public void train(RealMatrix train_input, RealMatrix train_output) {
-            RealMatrix calculated_output = feed_forward_vector(train_input);
-            System.out.println("mse: " + mse(train_output, calculated_output));
-            double learning_rate = 0.001;
+        public void train_new(RealMatrix train_input, RealMatrix train_output) {
+            RealMatrix calculated_output = feed_forward_vector_new(train_input);
+            System.out.println("mse: " + mse_new(train_output, calculated_output));
+            double learning_rate = 0.01;
 
             for (int i = architecture.length - 1; i >= 0; i--) {
                 if (i == architecture.length - 1) {
                     deltas[i] = train_output.subtract(calculated_output).scalarMultiply(-2);
                 } else {
-                    deltas[i] = weights[i + 1].multiply(deltas[i + 1]);
+                    deltas[i] = weights[i + 1].transpose().multiply(deltas[i + 1]);
                 }
             }
 
             RealMatrix[] grads_w = new RealMatrix[architecture.length];
             for (int i = 0; i < deltas.length; i++) {
                 if (i == 0) {
-                    grads_w[i] = deltas[i].multiply(train_input);
+                    grads_w[i] = deltas[i].multiply(train_input.transpose());
                 } else {
-                    grads_w[i] = deltas[i].multiply(layer_outputs[i - 1]);
+                    grads_w[i] = deltas[i].multiply(layer_outputs[i - 1].transpose());
                 }
             }
 
@@ -78,37 +78,28 @@ public class Microframework {
             }
 
             for (int i = 0; i < weights.length; i++) {
-                weights[i] = weights[i].subtract(grads_w[i].transpose());
+                weights[i] = weights[i].subtract(grads_w[i]);
             }
 
             for (int i = 0; i < biases.length; i++) {
-                biases[i] = biases[i].subtract(grads_b[i].transpose());
+                biases[i] = biases[i].subtract(grads_b[i]);
             }
 
         }
 
-        public RealMatrix feed_forward_vector(RealMatrix input_vector) {
-            RealMatrix output_vector = MatrixUtils.createRealMatrix(input_vector.getRowDimension(), architecture[architecture.length - 1]);
+
+        public RealMatrix feed_forward_vector_new(RealMatrix input_vector) {
+            RealMatrix output_vector = MatrixUtils.createRealMatrix(architecture[architecture.length - 1], 1);
             RealMatrix network_output = input_vector;
             for (int i = 0; i < architecture.length; i++) {
-                network_output = network_output.multiply(weights[i]).add(biases[i]);
+                network_output = network_output.preMultiply(weights[i]).add(biases[i]);
                 layer_outputs[i] = network_output;
             }
-            output_vector.setRowMatrix(0, network_output);
+            output_vector.setColumnMatrix(0, network_output);
             return output_vector;
         }
 
-        public RealMatrix feed_forward_batch(RealMatrix input_matrix) {
-            int rowDimension = input_matrix.getRowDimension();
-            RealMatrix output_matrix = MatrixUtils.createRealMatrix(rowDimension, architecture[architecture.length - 1]);
-            for (int i = 0; i < rowDimension; i++) {
-                output_matrix.setRowMatrix(i, feed_forward_vector(input_matrix.getRowMatrix(i)));
-            }
-            return output_matrix;
-        }
-
-
-        public double mse(RealMatrix real, RealMatrix calc) {
+        public double mse_new(RealMatrix real, RealMatrix calc) {
             RealMatrix subtracted = real.subtract(calc);
             int rowDimension = subtracted.getRowDimension();
             int columnDimension = subtracted.getColumnDimension();
@@ -141,40 +132,43 @@ public class Microframework {
 
 
     public static void main(String[] args) {
-        NN nn = new NN(2, new int[]{2, 2, 1});
+        NN nn = new NN(2, new int[]{2, 3, 2, 2});
 
-        RealMatrix andInput = getAndInput();
-        RealMatrix andOutput = getAndOutput();
+        RealMatrix andInput = getAndInputNew();
+        RealMatrix andOutput = getAndOutputNew();
 
-        for (int i = 0; i < 10000; i++) {
-            nn.train_on_batch(andInput, andOutput);
+        for (int i = 0; i < 1000; i++) {
+            nn.train_on_batch_new(andInput, andOutput);
         }
-
-        System.out.println(andOutput);
-        for (int i = 0; i < andInput.getRowDimension(); i++) {
-            System.out.println(nn.feed_forward_vector(andInput.getRowMatrix(i)));
+        for (int i = 0; i < 4; i++) {
+            System.out.println(nn.feed_forward_vector_new(andInput.getColumnMatrix(i)));
+            System.out.println(andOutput.getColumnMatrix(i));
         }
     }
 
-    private static RealMatrix getAndOutput() {
-        RealMatrix output = MatrixUtils.createRealMatrix(4, 1);
+    private static RealMatrix getAndOutputNew() {
+        RealMatrix output = MatrixUtils.createRealMatrix(2, 4);
         output.setEntry(0, 0, 0);
         output.setEntry(1, 0, 0);
-        output.setEntry(2, 0, 0);
-        output.setEntry(3, 0, 1);
+        output.setEntry(0, 1, 0);
+        output.setEntry(1, 1, 0);
+        output.setEntry(0, 2, 0);
+        output.setEntry(1, 2, 0);
+        output.setEntry(0, 3, 1);
+        output.setEntry(1, 3, 1);
         return output;
     }
 
-    private static RealMatrix getAndInput() {
-        RealMatrix input = MatrixUtils.createRealMatrix(4, 2);
+    private static RealMatrix getAndInputNew() {
+        RealMatrix input = MatrixUtils.createRealMatrix(2, 4);
         input.setEntry(0, 0, 0);
-        input.setEntry(0, 1, 0);
         input.setEntry(1, 0, 0);
+        input.setEntry(0, 1, 0);
         input.setEntry(1, 1, 1);
-        input.setEntry(2, 0, 1);
-        input.setEntry(2, 1, 0);
-        input.setEntry(3, 0, 1);
-        input.setEntry(3, 1, 1);
+        input.setEntry(0, 2, 1);
+        input.setEntry(1, 2, 0);
+        input.setEntry(0, 3, 1);
+        input.setEntry(1, 3, 1);
         return input;
     }
 }
