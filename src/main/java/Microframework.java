@@ -1,7 +1,7 @@
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-public class Matrix {
+public class Microframework {
 
 
     private static class NN {
