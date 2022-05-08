@@ -1,7 +1,5 @@
 package com.samples;
 
-import java.util.Arrays;
-
 import static com.utils.ErrorsUtils.mse;
 import static com.utils.MathUtils.average;
 
@@ -21,7 +19,7 @@ public class SingleNeuronBackpropagation {
      * @param b - up-down coefficient
      * @return an array of outputs calculated using the line function
      */
-    private double[] line(double a, double[] x, double b) {
+    public double[] forward_propagate(double a, double[] x, double b) {
         double[] y = new double[x.length];
         for (int i = 0; i < y.length; i++) {
             y[i] = a * x[i] + b;
@@ -56,7 +54,7 @@ public class SingleNeuronBackpropagation {
         double b = Math.random();
 
         for (int i = 0; i < epochs; i++) {
-            double[] calculated_output = line(w, input, b);
+            double[] calculated_output = forward_propagate(w, input, b);
             double mse = mse(expected_output, calculated_output);
             System.out.println("mse: " + mse);
             System.out.println("w: " + w);

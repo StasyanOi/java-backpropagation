@@ -14,7 +14,13 @@ class SingleNeuronBackpropagationIntegrationTest {
         double learning_rate = 0.01;
         int epochs = 1000;
         double[] final_coefficients = singleNeuronBackpropagation.train_linear_model(input, expected_output, epochs, learning_rate);
-        Assertions.assertEquals(2, Math.round(final_coefficients[0]));
-        Assertions.assertEquals(-1, Math.round(final_coefficients[1]));
+        double a = final_coefficients[0];
+        double b = final_coefficients[1];
+        double[] calculated_output = singleNeuronBackpropagation.forward_propagate(a, input, b);
+
+        for (int i = 0; i < calculated_output.length; i++) {
+            calculated_output[i] = Math.round(calculated_output[i]);
+            Assertions.assertEquals(expected_output[i], calculated_output[i]);
+        }
     }
 }
