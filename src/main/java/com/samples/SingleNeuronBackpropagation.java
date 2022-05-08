@@ -2,8 +2,8 @@ package com.samples;
 
 import java.util.Arrays;
 
-import static com.Errors.mse;
-import static com.MathUtils.average;
+import static com.utils.ErrorsUtils.mse;
+import static com.utils.MathUtils.average;
 
 /**
  * This is a sample with plain backpropagation implementation in a line function (a*x + b = y).
@@ -51,7 +51,7 @@ public class SingleNeuronBackpropagation {
         return partial_b;
     }
 
-    private double[] train_linear_model(double[] input, double[] expected_output, int epochs, double learning_rate) {
+    public double[] train_linear_model(double[] input, double[] expected_output, int epochs, double learning_rate) {
         double w = Math.random();
         double b = Math.random();
 
@@ -67,16 +67,5 @@ public class SingleNeuronBackpropagation {
             b = update_weight(b, partial_derivative_b, learning_rate);
         }
         return new double[]{w, b};
-    }
-
-    public static void main(String[] args) {
-        double[] input = {-3, -2, -1, 0, 1, 2, 3};
-        double[] expected_output = {-7, -5, -3, -1, 1, 3, 5};
-        double learning_rate = 0.01;
-        int epochs = 100;
-        var singleNeuronBackpropagation = new SingleNeuronBackpropagation();
-        double[] final_coefficients = singleNeuronBackpropagation.train_linear_model(input, expected_output, epochs, learning_rate);
-        System.out.print("Final coefficients \"w\" and \"b\": ");
-        System.out.println(Arrays.toString(final_coefficients));
     }
 }

@@ -1,9 +1,9 @@
-package com;
+package com.utils;
 
 
-public final class Errors {
+public final class ErrorsUtils {
 
-    private Errors() {}
+    private ErrorsUtils() {}
 
     public static double mse(double[] y_real, double[] y_calc) {
         double error = 0;

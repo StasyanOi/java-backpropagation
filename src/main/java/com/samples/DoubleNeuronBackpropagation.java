@@ -1,7 +1,7 @@
 package com.samples;
 
-import static com.Errors.mse;
-import static com.MathUtils.average;
+import static com.utils.ErrorsUtils.mse;
+import static com.utils.MathUtils.average;
 
 public class DoubleNeuronBackpropagation {
 
@@ -81,16 +81,7 @@ public class DoubleNeuronBackpropagation {
         return array3;
     }
 
-    public static void main(String[] args) {
-        double[] input = {-3, -2, -1, 0, 1, 2, 3};
-        double[] expected_output = {-7, -5, -3, -1, 1, 3, 5};
-        double learning_rate = 0.01;
-        int epochs = 100;
-        var doubleNeuronBackpropagation = new DoubleNeuronBackpropagation();
-        doubleNeuronBackpropagation.train_model(input, expected_output, epochs, learning_rate);
-    }
-
-    private void train_model(double[] input, double[] expected_output, int epochs, double learning_rate) {
+    public double[][] train_model(double[] input, double[] expected_output, int epochs, double learning_rate) {
         double w1 = Math.random();
         double w2 = Math.random();
         double b1 = Math.random();
@@ -132,9 +123,8 @@ public class DoubleNeuronBackpropagation {
             double[] delta_b1 = multiply(delta_b2, parameters[1][0]);
             double[] partial_derivative_b1 = multiply(delta_b1, 1);
             parameters[0][1] = update_weight(parameters[0][1], average(partial_derivative_b1), learning_rate);
-
-
         }
 
+        return parameters;
     }
 }
