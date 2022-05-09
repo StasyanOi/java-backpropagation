@@ -88,17 +88,11 @@ public class DoubleNeuronBackpropagation {
         double b2 = Math.random();
 
         double[][] parameters = {{w1, b1}, {w2, b2}};
-        double[][] a = new double[3][7];
-        a[0] = input;
+        double[][] layer_outputs = new double[3][input.length];
 
         for (int i = 0; i < epochs; i++) {
 
-            double[] calculated_output = input;
-            for (int j = 0; j < parameters.length; j++) {
-                double[] output = line(parameters[j][0], calculated_output, parameters[j][1]);
-                a[j + 1] = output;
-                calculated_output = output;
-            }
+            double[] calculated_output = forward_propagate(input, parameters, layer_outputs);
 
             double mse = mse(expected_output, calculated_output);
 
@@ -106,7 +100,7 @@ public class DoubleNeuronBackpropagation {
 
             //update w2
             double[] delta_w2 = delta_initial(expected_output, calculated_output);
-            double[] partial_derivative_w2 = multiply(delta_w2, a[1]);
+            double[] partial_derivative_w2 = multiply(delta_w2, layer_outputs[1]);
             parameters[1][0] = update_weight(parameters[1][0], average(partial_derivative_w2), learning_rate);
 
             //update b2
@@ -116,15 +110,26 @@ public class DoubleNeuronBackpropagation {
 
             //update w1
             double[] delta_w1 = multiply(delta_w2, parameters[1][0]);
-            double[] partial_derivative_w1 = multiply(delta_w1, a[0]);
+            double[] partial_derivative_w1 = multiply(delta_w1, layer_outputs[0]);
             parameters[0][0] = update_weight(parameters[0][0], average(partial_derivative_w1), learning_rate);
 
             //update b1
-            double[] delta_b1 = multiply(delta_b2, parameters[1][0]);
+            double[] delta_b1 = multiply(delta_b2, parameters[1][1]);
             double[] partial_derivative_b1 = multiply(delta_b1, 1);
             parameters[0][1] = update_weight(parameters[0][1], average(partial_derivative_b1), learning_rate);
         }
 
         return parameters;
+    }
+
+    private double[] forward_propagate(double[] input, double[][] parameters, double[][] a) {
+        double[] calculated_output = input;
+        a[0] = input;
+        for (int j = 0; j < parameters.length; j++) {
+            double[] output = line(parameters[j][0], calculated_output, parameters[j][1]);
+            a[j + 1] = output;
+            calculated_output = output;
+        }
+        return calculated_output;
     }
 }
