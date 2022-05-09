@@ -81,13 +81,7 @@ public class DoubleNeuronBackpropagation {
         return array3;
     }
 
-    public double[][] train_model(double[] input, double[] expected_output, int epochs, double learning_rate) {
-        double w1 = Math.random();
-        double w2 = Math.random();
-        double b1 = Math.random();
-        double b2 = Math.random();
-
-        double[][] parameters = {{w1, b1}, {w2, b2}};
+    public double[][] train_model(double[] input, double[] expected_output, double[][] parameters, int epochs, double learning_rate) {
         double[][] layer_outputs = new double[3][input.length];
 
         for (int i = 0; i < epochs; i++) {
@@ -122,12 +116,12 @@ public class DoubleNeuronBackpropagation {
         return parameters;
     }
 
-    private double[] forward_propagate(double[] input, double[][] parameters, double[][] a) {
+    public double[] forward_propagate(double[] input, double[][] parameters, double[][] layer_outputs) {
         double[] calculated_output = input;
-        a[0] = input;
+        layer_outputs[0] = input;
         for (int j = 0; j < parameters.length; j++) {
             double[] output = line(parameters[j][0], calculated_output, parameters[j][1]);
-            a[j + 1] = output;
+            layer_outputs[j + 1] = output;
             calculated_output = output;
         }
         return calculated_output;
