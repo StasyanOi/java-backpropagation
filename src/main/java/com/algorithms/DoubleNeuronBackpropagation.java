@@ -1,4 +1,4 @@
-package com.samples;
+package com.algorithms;
 
 import static com.utils.ErrorsUtils.mse;
 import static com.utils.MathUtils.average;
@@ -13,11 +13,11 @@ public class DoubleNeuronBackpropagation {
         return y;
     }
 
-    private double update_weight(double initial, double partial_derivative, double learning_rate) {
+    private double updateWeight(double initial, double partial_derivative, double learning_rate) {
         return initial - partial_derivative * learning_rate;
     }
 
-    private double[] partial_w(double[] input, double[] y_real, double[] y_calc) {
+    private double[] partialW(double[] input, double[] y_real, double[] y_calc) {
         double[] partial_w = new double[input.length];
         for (int i = 0; i < partial_w.length; i++) {
             partial_w[i] = (-2 * y_real[i] + 2 * y_calc[i]) * input[i];
@@ -25,7 +25,7 @@ public class DoubleNeuronBackpropagation {
         return partial_w;
     }
 
-    private double[] partial_b(double[] y_real, double[] y_calc) {
+    private double[] partialB(double[] y_real, double[] y_calc) {
         double[] partial_b = new double[y_real.length];
         for (int i = 0; i < partial_b.length; i++) {
             partial_b[i] = (-2 * y_real[i] + 2 * y_calc[i]);
@@ -57,7 +57,7 @@ public class DoubleNeuronBackpropagation {
         return array3;
     }
 
-    private double[] delta_initial(double[] y_real, double[] y_calc) {
+    private double[] deltaInitial(double[] y_real, double[] y_calc) {
         double[] delta = new double[y_real.length];
         for (int i = 0; i < delta.length; i++) {
             delta[i] = (-2 * y_real[i] + 2 * y_calc[i]);
@@ -81,42 +81,42 @@ public class DoubleNeuronBackpropagation {
         return array3;
     }
 
-    public double[][] train_model(double[] input, double[] expected_output, double[][] parameters, int epochs, double learning_rate) {
+    public double[][] trainModel(double[] input, double[] expected_output, double[][] parameters, int epochs, double learning_rate) {
         double[][] layer_outputs = new double[3][input.length];
 
         for (int i = 0; i < epochs; i++) {
 
-            double[] calculated_output = forward_propagate(input, parameters, layer_outputs);
+            double[] calculated_output = forwardPropagate(input, parameters, layer_outputs);
 
             double mse = mse(expected_output, calculated_output);
 
             System.out.println("mse: " + mse);
 
             //update w2
-            double[] delta_w2 = delta_initial(expected_output, calculated_output);
+            double[] delta_w2 = deltaInitial(expected_output, calculated_output);
             double[] partial_derivative_w2 = multiply(delta_w2, layer_outputs[1]);
-            parameters[1][0] = update_weight(parameters[1][0], average(partial_derivative_w2), learning_rate);
+            parameters[1][0] = updateWeight(parameters[1][0], average(partial_derivative_w2), learning_rate);
 
             //update b2
-            double[] delta_b2 = delta_initial(expected_output, calculated_output);
+            double[] delta_b2 = deltaInitial(expected_output, calculated_output);
             double[] partial_derivative_b2 = multiply(delta_b2, 1);
-            parameters[1][1] = update_weight(parameters[1][1], average(partial_derivative_b2), learning_rate);
+            parameters[1][1] = updateWeight(parameters[1][1], average(partial_derivative_b2), learning_rate);
 
             //update w1
             double[] delta_w1 = multiply(delta_w2, parameters[1][0]);
             double[] partial_derivative_w1 = multiply(delta_w1, layer_outputs[0]);
-            parameters[0][0] = update_weight(parameters[0][0], average(partial_derivative_w1), learning_rate);
+            parameters[0][0] = updateWeight(parameters[0][0], average(partial_derivative_w1), learning_rate);
 
             //update b1
             double[] delta_b1 = multiply(delta_b2, parameters[1][1]);
             double[] partial_derivative_b1 = multiply(delta_b1, 1);
-            parameters[0][1] = update_weight(parameters[0][1], average(partial_derivative_b1), learning_rate);
+            parameters[0][1] = updateWeight(parameters[0][1], average(partial_derivative_b1), learning_rate);
         }
 
         return parameters;
     }
 
-    public double[] forward_propagate(double[] input, double[][] parameters, double[][] layer_outputs) {
+    public double[] forwardPropagate(double[] input, double[][] parameters, double[][] layer_outputs) {
         double[] calculated_output = input;
         layer_outputs[0] = input;
         for (int j = 0; j < parameters.length; j++) {
