@@ -1,29 +1,12 @@
-# java-backpropagation-microframework
+package com.utils;
 
-com.algorithms.Microframework for creating multilayer perceptrons (MSE is used as default error).
-
-## Sample usage
-
-```java
-package com;
-
-import com.algorithms.Perceptron;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-public class Main {
-
-    public static void main(String[] args) {
-        Perceptron perceptron = new Perceptron(2, new int[]{2, 3, 3, 3, 2});
-
-        RealMatrix andInput = getAndInputNew();
-        RealMatrix andOutput = getAndOutputNew();
-
-        for (int i = 0; i < 1000; i++) {
-            perceptron.trainOnBatchBsgd(andInput, andOutput);
-        }
-        System.out.println(perceptron.feedForwardVector(andInput.getColumnMatrix(0)));
+public final class DataUtils {
+    private DataUtils() {
     }
+
 
     public static RealMatrix getAndOutputNew() {
         RealMatrix output = MatrixUtils.createRealMatrix(2, 4);
@@ -51,6 +34,3 @@ public class Main {
         return input;
     }
 }
-
-```
-
