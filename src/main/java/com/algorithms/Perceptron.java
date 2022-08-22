@@ -1,12 +1,11 @@
-package com.samples;
+package com.algorithms;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-public class Microframework {
+import static com.utils.MathUtils.random;
 
-
-    private static class NN {
+public class Perceptron {
 
         private final RealMatrix[] layer_outputs;
         private final RealMatrix[] weights;
@@ -14,7 +13,7 @@ public class Microframework {
         private final RealMatrix[] deltas;
         private final int[] architecture;
 
-        public NN(int input_size, int[] layers) {
+        public Perceptron(int input_size, int[] layers) {
             deltas = new RealMatrix[layers.length];
             layer_outputs = new RealMatrix[layers.length];
             weights = new RealMatrix[layers.length];
@@ -34,13 +33,13 @@ public class Microframework {
             architecture = layers;
         }
 
-        public void train_on_batch_sgd(RealMatrix train_inputs, RealMatrix train_outputs) {
+        public void trainOnBatchSgd(RealMatrix train_inputs, RealMatrix train_outputs) {
             for (int i = 0; i < train_inputs.getColumnDimension(); i++) {
                 train_on_vector(train_inputs.getColumnMatrix(i), train_outputs.getColumnMatrix(i));
             }
         }
 
-        public void train_on_batch_bsgd(RealMatrix train_inputs, RealMatrix train_outputs) {
+        public void trainOnBatchBsgd(RealMatrix train_inputs, RealMatrix train_outputs) {
             RealMatrix[] grads_w = new RealMatrix[architecture.length];
             RealMatrix[] grads_b = new RealMatrix[architecture.length];
             double learning_rate = 0.01;
@@ -48,7 +47,7 @@ public class Microframework {
             for (int m = 0; m < elements; m++) {
                 RealMatrix train_input = train_inputs.getColumnMatrix(m);
                 RealMatrix train_output = train_outputs.getColumnMatrix(m);
-                RealMatrix calculated_output = feed_forward_vector(train_input);
+                RealMatrix calculated_output = feedForwardVector(train_input);
 
                 System.out.println("mse: " + mse(train_output, calculated_output));
 
@@ -98,7 +97,7 @@ public class Microframework {
         }
 
         public void train_on_vector(RealMatrix train_input, RealMatrix train_output) {
-            RealMatrix calculated_output = feed_forward_vector(train_input);
+            RealMatrix calculated_output = feedForwardVector(train_input);
             System.out.println("mse: " + mse(train_output, calculated_output));
             double learning_rate = 0.01;
 
@@ -134,7 +133,7 @@ public class Microframework {
         }
 
 
-        public RealMatrix feed_forward_vector(RealMatrix input_vector) {
+        public RealMatrix feedForwardVector(RealMatrix input_vector) {
             RealMatrix output_vector = MatrixUtils.createRealMatrix(architecture[architecture.length - 1], 1);
             RealMatrix network_output = input_vector;
             for (int i = 0; i < architecture.length; i++) {
@@ -164,57 +163,3 @@ public class Microframework {
             return total / (rowDimension * columnDimension);
         }
     }
-
-
-    public static RealMatrix random(int numRows, int numCols) {
-        RealMatrix matrix64F = MatrixUtils.createRealMatrix(numRows, numCols);
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                matrix64F.setEntry(i, j, Math.random());
-            }
-        }
-        return matrix64F;
-    }
-
-
-    public static void main(String[] args) {
-        NN nn = new NN(2, new int[]{2, 3, 2, 2});
-
-        RealMatrix andInput = getAndInputNew();
-        RealMatrix andOutput = getAndOutputNew();
-
-        for (int i = 0; i < 500; i++) {
-            nn.train_on_batch_bsgd(andInput, andOutput);
-        }
-        for (int i = 0; i < 4; i++) {
-            System.out.println(nn.feed_forward_vector(andInput.getColumnMatrix(i)));
-            System.out.println(andOutput.getColumnMatrix(i));
-        }
-    }
-
-    private static RealMatrix getAndOutputNew() {
-        RealMatrix output = MatrixUtils.createRealMatrix(2, 4);
-        output.setEntry(0, 0, 0);
-        output.setEntry(1, 0, 0);
-        output.setEntry(0, 1, 0);
-        output.setEntry(1, 1, 0);
-        output.setEntry(0, 2, 0);
-        output.setEntry(1, 2, 0);
-        output.setEntry(0, 3, 1);
-        output.setEntry(1, 3, 1);
-        return output;
-    }
-
-    private static RealMatrix getAndInputNew() {
-        RealMatrix input = MatrixUtils.createRealMatrix(2, 4);
-        input.setEntry(0, 0, 0);
-        input.setEntry(1, 0, 0);
-        input.setEntry(0, 1, 0);
-        input.setEntry(1, 1, 1);
-        input.setEntry(0, 2, 1);
-        input.setEntry(1, 2, 0);
-        input.setEntry(0, 3, 1);
-        input.setEntry(1, 3, 1);
-        return input;
-    }
-}
